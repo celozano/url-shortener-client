@@ -1,18 +1,12 @@
 import React from "react";
 import WarningBanner from "./WarningBanner";
+import "../styles/search.css";
 
 class SearchBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = { showWarning: false, longURL: "" };
   }
-
-  handleOnChange = e => {
-    this.setState({ longURL: e.target.value });
-    if (this.state.showWarning && !e.target.value) {
-      this.setState({ showWarning: false });
-    }
-  };
 
   // https://stackoverflow.com/a/49849482
   isValidURL = string => {
@@ -22,18 +16,22 @@ class SearchBox extends React.Component {
     return res == null ? false : true;
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    if (this.state.longURL === "") {
+  handleSubmit = longURL => {
+    if (longURL === "") {
       return;
     }
 
-    if (!this.isValidURL(this.state.longURL)) {
+    if (!this.isValidURL(longURL)) {
       this.setState({ showWarning: true });
+      setTimeout(() => {
+        this.setState({
+          showWarning: false
+        });
+      }, 3000);
       return;
     }
 
-    this.props.onSubmit(this.state.longURL);
+    this.props.onSubmit(longURL);
     this.setState({ longURL: "" });
   };
 
@@ -64,8 +62,13 @@ class SearchBox extends React.Component {
           warn={this.state.showWarning}
           message="Unable to shorten that link. It is not a valid url."
         />
-        <form onSubmit={this.handleSubmit}>
-          <div className="row justify-content-md-center mt-4 mb-4">
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            this.handleSubmit(this.state.longURL);
+          }}
+        >
+          <div className="row justify-content-md-center mt-5 mb-5">
             <div className="col-sm-10">
               <div className="input-group input-group-lg">
                 <input
@@ -73,7 +76,7 @@ class SearchBox extends React.Component {
                   type="text"
                   placeholder="Paste a link to shorten it"
                   value={this.state.longURL}
-                  onChange={this.handleOnChange}
+                  onChange={e => this.setState({ longURL: e.target.value })}
                 />
                 <div className="input-group-append">{button}</div>
               </div>

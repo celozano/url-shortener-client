@@ -10,6 +10,15 @@ const LinkListItem = props => {
     return redirectLink;
   }
 
+  function copyToClipboard(shortURL) {
+    const el = document.createElement("textarea");
+    el.value = shortURL;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+  }
+
   return (
     <div className="list-group-item">
       <ul className="list-unstyled mb-0">
@@ -24,7 +33,16 @@ const LinkListItem = props => {
             <small className="text-muted">{props.longURL}</small>
           </a>
         </li>
-        <li className="text-info">{props.shortURL}</li>
+        <li className="text-info">
+          {props.shortURL}
+          <button
+            class="btn btn-sm btn-outline-info"
+            style={{ marginLeft: "15px" }}
+            onClick={copyToClipboard(props.shortURL)}
+          >
+            COPY
+          </button>
+        </li>
       </ul>
     </div>
   );
