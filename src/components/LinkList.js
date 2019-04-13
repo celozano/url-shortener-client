@@ -1,28 +1,31 @@
 import React from "react";
 import LinkListItem from "./LinkListItem";
 
-const LinkList = props => {
-  if (props.history.length < 1) {
-    return null;
+class LinkList extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.history.length !== this.props.history.length) {
+      return true;
+    }
+    return false;
   }
 
-  let fixedHistory = props.history.slice();
+  render() {
+    if (this.props.history.length < 1) {
+      return null;
+    }
 
-  const links = fixedHistory
-    .reverse()
-    .slice(0, 5)
-    .map(link => {
+    return this.props.history.slice(0, 5).map((link, i) => {
       return (
         <LinkListItem
-          key={link.hash}
+          id={link.hash + i}
+          key={link.hash + i}
           longURL={link.longURL}
           shortURL={link.shortURL}
           pageTitle={link.pageTitle}
         />
       );
     });
-
-  return <div className="list-group mt-n5">{links}</div>;
-};
+  }
+}
 
 export default LinkList;

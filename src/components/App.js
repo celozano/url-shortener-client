@@ -1,10 +1,11 @@
 import React from "react";
 import axios from "axios";
 
-import Background from "./Background";
 import SearchBox from "./SearchBox";
 import LinkList from "./LinkList";
 import WarningBanner from "./WarningBanner";
+
+import "../styles/custom.css";
 
 class App extends React.Component {
   constructor(props) {
@@ -16,6 +17,17 @@ class App extends React.Component {
       isLoading: false
     };
   }
+
+  showWarning = message => {
+    this.setState({ showWarning: true, message });
+    setTimeout(() => {
+      this.setState({
+        showWarning: false,
+        message: "",
+        isLoading: false
+      });
+    }, 3000);
+  };
 
   handleSearchSubmit = async longURL => {
     try {
@@ -33,43 +45,42 @@ class App extends React.Component {
       };
 
       this.setState({
-        history: [...this.state.history, link],
+        history: [link, ...this.state.history],
         isLoading: false
       });
     } catch (err) {
-      this.setState({ showWarning: true, message: err.message });
-      setTimeout(() => {
-        this.setState({
-          showWarning: false,
-          message: "",
-          isLoading: false
-        });
-      }, 3000);
+      this.showWarning(err.message);
     }
   };
 
   render() {
     return (
       <div>
-        <Background />
         <WarningBanner
           warn={this.state.showWarning}
           message={this.state.message}
         />
-        <div
-          className="jumbotron jumbotron-fluid"
-          style={{ backgroundColor: "rgb(255, 255, 255, .2)" }}
-        >
+        <div className="jumbotron jumbotron-fluid">
           <div className="container">
             <SearchBox
               onSubmit={this.handleSearchSubmit}
               loading={this.state.isLoading}
+              onError={this.showWarning}
             />
           </div>
         </div>
         <div className="container">
-          <LinkList history={this.state.history} />
+          <div className="list-group mt-n5 pb-3">
+            <LinkList history={this.state.history} />
+          </div>
         </div>
+        <footer className="footer">
+          <div className="container">
+            <span className="text-muted">
+              <small>Desarrollado por Carlos Lozano</small>
+            </span>
+          </div>
+        </footer>
       </div>
     );
   }

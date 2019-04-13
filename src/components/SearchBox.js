@@ -1,11 +1,10 @@
 import React from "react";
-import WarningBanner from "./WarningBanner";
-import "../styles/search.css";
 
 class SearchBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showWarning: false, longURL: "" };
+    this.state = { longURL: "" };
+    this.urlInput = React.createRef();
   }
 
   // https://stackoverflow.com/a/49849482
@@ -22,18 +21,18 @@ class SearchBox extends React.Component {
     }
 
     if (!this.isValidURL(longURL)) {
-      this.setState({ showWarning: true });
-      setTimeout(() => {
-        this.setState({
-          showWarning: false
-        });
-      }, 3000);
+      this.props.onError("Unable to shorten that link. It is not a valid url.");
+
       return;
     }
 
     this.props.onSubmit(longURL);
     this.setState({ longURL: "" });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    this.urlInput.current.focus();
+  }
 
   render() {
     let button;
@@ -57,33 +56,29 @@ class SearchBox extends React.Component {
     }
 
     return (
-      <div>
-        <WarningBanner
-          warn={this.state.showWarning}
-          message="Unable to shorten that link. It is not a valid url."
-        />
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            this.handleSubmit(this.state.longURL);
-          }}
-        >
-          <div className="row justify-content-md-center mt-5 mb-5">
-            <div className="col-sm-10">
-              <div className="input-group input-group-lg">
-                <input
-                  className="form-control"
-                  type="text"
-                  placeholder="Paste a link to shorten it"
-                  value={this.state.longURL}
-                  onChange={e => this.setState({ longURL: e.target.value })}
-                />
-                <div className="input-group-append">{button}</div>
-              </div>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          this.handleSubmit(this.state.longURL);
+        }}
+      >
+        <div className="row justify-content-center mt-5 mb-5">
+          <div className="col-sm-10">
+            <div className="input-group">
+              <input
+                autoFocus={true}
+                ref={this.urlInput}
+                className="form-control"
+                type="text"
+                placeholder="Paste a link to shorten it"
+                value={this.state.longURL}
+                onChange={e => this.setState({ longURL: e.target.value })}
+              />
+              <div className="input-group-append">{button}</div>
             </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     );
   }
 }

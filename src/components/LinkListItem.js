@@ -36,9 +36,11 @@ const LinkListItem = props => {
         <li className="text-info">
           {props.shortURL}
           <button
-            class="btn btn-sm btn-outline-info"
+            className="btn btn-sm btn-outline-info"
             style={{ marginLeft: "15px" }}
-            onClick={copyToClipboard(props.shortURL)}
+            onClick={e => {
+              copyToClipboard(props.shortURL);
+            }}
           >
             COPY
           </button>
