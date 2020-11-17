@@ -1,52 +1,54 @@
 import React from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
+import { copyToClipboard, handleLinkProtocol } from "../uitls";
 
-const LinkListItem = props => {
-  function handleLinkProtocol(longURL) {
-    let redirectLink =
-      longURL.includes("http://") || longURL.includes("https://")
-        ? longURL
-        : `http://${longURL}`;
-
-    return redirectLink;
-  }
-
-  function copyToClipboard(shortURL) {
-    const el = document.createElement("textarea");
-    el.value = shortURL;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
-  }
-
+const LinkListItem = ({ pageTitle, longURL, shortURL, hasDivider }) => {
   return (
-    <div className="list-group-item">
-      <ul className="list-unstyled mb-0">
-        <li>{props.pageTitle}</li>
-        <li className="pb-2">
-          <a
-            href={handleLinkProtocol(props.longURL)}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: "none" }}
-          >
-            <small className="text-muted">{props.longURL}</small>
-          </a>
-        </li>
-        <li className="text-info">
-          {props.shortURL}
-          <button
-            className="btn btn-sm btn-outline-info"
-            style={{ marginLeft: "15px" }}
-            onClick={e => {
-              copyToClipboard(props.shortURL);
-            }}
-          >
-            COPY
-          </button>
-        </li>
-      </ul>
-    </div>
+    <>
+      {hasDivider ? <Divider /> : null}
+      <Box pt={2} pb={2}>
+        <Grid container>
+          <Grid item xs={12} sm={12}>
+            <Typography>{pageTitle}</Typography>
+          </Grid>
+        </Grid>
+        <Grid container alignItems="center">
+          <Grid item xs={12} sm={5}>
+            <Tooltip title={longURL} placement="bottom-start">
+              <Typography noWrap={true}>{longURL}</Typography>
+            </Tooltip>
+          </Grid>
+          <Grid item xs={12} sm={5}>
+            <a
+              href={handleLinkProtocol(shortURL)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Typography noWrap={true}>{shortURL}</Typography>
+            </a>
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={(e) => {
+                copyToClipboard(shortURL);
+              }}
+              style={{ width: "100%" }}
+            >
+              COPY
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+    </>
   );
 };
 

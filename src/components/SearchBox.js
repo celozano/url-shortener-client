@@ -1,86 +1,61 @@
 import React from "react";
+import { Grid, Button, TextField } from "@material-ui/core";
+import { isValidURL } from "../uitls";
 
-class SearchBox extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { longURL: "" };
-    this.urlInput = React.createRef();
-  }
+const SearchBox = ({ onError, onSubmit, history, isLoading }) => {
+  const [url, setUrl] = React.useState("");
+  const inputRef = React.useRef(null);
+  React.useEffect(() => {
+    inputRef.current.focus();
+    setUrl("");
+  }, [history]);
 
-  // https://stackoverflow.com/a/49849482
-  isValidURL = string => {
-    var res = string.match(
-      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
-    );
-    return res == null ? false : true;
-  };
-
-  handleSubmit = longURL => {
-    if (longURL === "") {
+  const handleSubmit = (url) => {
+    if (url === "") {
       return;
     }
 
-    if (!this.isValidURL(longURL)) {
-      this.props.onError("Unable to shorten that link. It is not a valid url.");
+    if (!isValidURL(url)) {
+      onError("Unable to shorten that link. It is not a valid url.");
 
       return;
     }
 
-    this.props.onSubmit(longURL);
-    this.setState({ longURL: "" });
+    onSubmit(url);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    this.urlInput.current.focus();
-  }
-
-  render() {
-    let button;
-    if (this.props.loading) {
-      button = (
-        <button className="btn btn-primary" type="button" disabled>
-          <span
-            className="spinner-border spinner-border-sm"
-            role="status"
-            aria-hidden="true"
-          />
-          <span className="sr-only">Loading...</span>
-        </button>
-      );
-    } else {
-      button = (
-        <button type="submit" className="btn btn-info">
+  return (
+    <Grid container spacing={1}>
+      <Grid item xs={12} sm={9}>
+        <TextField
+          inputRef={inputRef}
+          label="Paste a link to shorten it"
+          variant="outlined"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          fullWidth
+        />
+      </Grid>
+      <Grid item xs={12} sm={3}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={(e) => {
+            e.preventDefault();
+            handleSubmit(url);
+          }}
+          fullWidth
+          style={{
+            padding: "15px",
+          }}
+          disabled={isLoading}
+        >
           SHORTEN
-        </button>
-      );
-    }
-
-    return (
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          this.handleSubmit(this.state.longURL);
-        }}
-      >
-        <div className="row justify-content-center mt-5 mb-5">
-          <div className="col-sm-10">
-            <div className="input-group">
-              <input
-                autoFocus={true}
-                ref={this.urlInput}
-                className="form-control"
-                type="text"
-                placeholder="Paste a link to shorten it"
-                value={this.state.longURL}
-                onChange={e => this.setState({ longURL: e.target.value })}
-              />
-              <div className="input-group-append">{button}</div>
-            </div>
-          </div>
-        </div>
-      </form>
-    );
-  }
-}
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default SearchBox;

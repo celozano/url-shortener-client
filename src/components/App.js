@@ -1,37 +1,22 @@
+import "fontsource-roboto";
 import React from "react";
 import axios from "axios";
+import { Grid } from "@material-ui/core";
 
 import SearchBox from "./SearchBox";
 import LinkList from "./LinkList";
 import WarningBanner from "./WarningBanner";
 
-import "../styles/custom.css";
+const App = () => {
+  const [history, setHistory] = React.useState([]);
+  const [message, setMessage] = React.useState([]);
+  const [showWarning, setShowWarning] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [],
-      showWarning: false,
-      message: "",
-      isLoading: false
-    };
-  }
-
-  showWarning = message => {
-    this.setState({ showWarning: true, message });
-    setTimeout(() => {
-      this.setState({
-        showWarning: false,
-        message: "",
-        isLoading: false
-      });
-    }, 3000);
-  };
-
-  handleSearchSubmit = async longURL => {
+  const handleSearchSubmit = async (longURL) => {
     try {
-      this.setState({ isLoading: true });
+      setIsLoading(true);
+
       const result = await axios.post(
         `${process.env.REACT_APP_API_HOST}/api/shorten`,
         { longURL }
@@ -41,49 +26,61 @@ class App extends React.Component {
         longURL: result.data.longURL,
         shortURL: result.data.shortURL,
         hash: result.data.hash,
-        pageTitle: result.data.pageTitle
+        pageTitle: result.data.pageTitle,
       };
 
-      this.setState({
-        history: [link, ...this.state.history],
-        isLoading: false
-      });
+      setHistory([link, ...history]);
+      setIsLoading(false);
     } catch (err) {
-      this.showWarning(err.message);
+      handleWarning(err.message);
     }
   };
 
-  render() {
-    return (
-      <div>
-        <WarningBanner
-          warn={this.state.showWarning}
-          message={this.state.message}
-        />
-        <div className="jumbotron jumbotron-fluid">
-          <div className="container">
+  const handleWarning = (message) => {
+    setShowWarning(true);
+    setMessage(message);
+
+    setTimeout(() => {
+      setShowWarning(false);
+      setMessage("");
+      setIsLoading();
+    }, 3000);
+  };
+
+  return (
+    <>
+      <WarningBanner warn={showWarning} message={message} />
+      <Grid container>
+        <Grid container justify="center">
+          <Grid
+            item
+            xs={8}
+            style={{
+              marginTop: "100px",
+            }}
+          >
             <SearchBox
-              onSubmit={this.handleSearchSubmit}
-              loading={this.state.isLoading}
-              onError={this.showWarning}
+              onSubmit={handleSearchSubmit}
+              onError={handleWarning}
+              history={history}
+              isLoading={isLoading}
             />
-          </div>
-        </div>
-        <div className="container">
-          <div className="list-group mt-n5 pb-3">
-            <LinkList history={this.state.history} />
-          </div>
-        </div>
-        <footer className="footer">
-          <div className="container">
-            <span className="text-muted">
-              <small>Desarrollado por Carlos Lozano</small>
-            </span>
-          </div>
-        </footer>
-      </div>
-    );
-  }
-}
+          </Grid>
+        </Grid>
+        <Grid container justify="center">
+          <Grid
+            item
+            xs={8}
+            style={{
+              marginTop: "50px",
+            }}
+          >
+            <LinkList history={history} />
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+};
 
 export default App;
