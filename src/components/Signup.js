@@ -1,10 +1,18 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Button, Container, Grid, TextField } from '@material-ui/core';
+import {
+  Button,
+  Container,
+  Divider,
+  Grid,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
+import ErrorMessage from './ErrorMessage';
 import { useAuth } from '../contexts/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +37,19 @@ const validationSchema = yup.object({
     .string('Enter you email')
     .min(8, 'Minimum 8 characters length')
     .required('Password is required'),
+  confirmPassword: yup
+    .string()
+    .required('Confirm your password')
+    .test(
+      'passwords-match',
+      "Those passwords didn't match. Try again.",
+      function (value) {
+        return this.parent.password === value;
+      }
+    ),
 });
 
 const Signup = () => {
-  const classes = useStyles();
-  const history = useHistory();
   const { signup, currentUser } = useAuth();
 
   React.useEffect(() => {
@@ -42,18 +58,22 @@ const Signup = () => {
     }
   }, []);
 
+  const classes = useStyles();
+  const history = useHistory();
+  const [error, setError] = React.useState('');
   const formik = useFormik({
     initialValues: {
-      email: 'foobar@example.com',
-      password: 'foobar',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
     validationSchema: validationSchema,
     onSubmit: async ({ email, password }) => {
       try {
         await signup(email, password);
         history.push('/');
-      } catch {
-        console.log('error');
+      } catch (e) {
+        setError(e.message);
       }
     },
   });
@@ -61,6 +81,11 @@ const Signup = () => {
   return (
     <Container maxWidth="xs">
       <Grid item className={classes.container}>
+        <Typography align="center" variant="h5">
+          Sign Up
+          <Divider />
+        </Typography>
+        {error && <ErrorMessage error={error} />}
         <form className={classes.form} onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
@@ -84,6 +109,23 @@ const Signup = () => {
             onChange={formik.handleChange}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+          />
+          <TextField
+            fullWidth
+            id="confirmPassword"
+            label="Confirm"
+            type="password"
+            margin="normal"
+            variant="outlined"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.confirmPassword &&
+              Boolean(formik.errors.confirmPassword)
+            }
+            helperText={
+              formik.touched.confirmPassword && formik.errors.confirmPassword
+            }
           />
           <Button
             type="submit"

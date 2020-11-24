@@ -6,12 +6,12 @@ import { Grid } from '@material-ui/core';
 import NavBar from './NavBar';
 import SearchBox from './SearchBox';
 import LinkList from './LinkList';
-import WarningBanner from './WarningBanner';
+import ErrorMessage from './ErrorMessage';
 
 const Dashboard = () => {
   const [history, setHistory] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [error, setError] = React.useState('');
 
   const handleSearchSubmit = async (longURL) => {
     try {
@@ -38,10 +38,10 @@ const Dashboard = () => {
   };
 
   const handleWarning = (message) => {
-    setErrorMessage(message);
+    setError(message);
 
     setTimeout(() => {
-      setErrorMessage('');
+      setError('');
       setIsLoading(false);
     }, 3000);
   };
@@ -64,7 +64,7 @@ const Dashboard = () => {
               history={history}
               isLoading={isLoading}
             />
-            {errorMessage && <WarningBanner errorMessage={errorMessage} />}
+            {error && <ErrorMessage error={error} />}
           </Grid>
         </Grid>
         <Grid container justify="center">

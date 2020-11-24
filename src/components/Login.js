@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Button, Container, Grid, TextField } from '@material-ui/core';
+import {
+  Button,
+  Container,
+  Divider,
+  Grid,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 
+import ErrorMessage from './ErrorMessage';
 import { useAuth } from '../contexts/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,20 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const validationSchema = yup.object({
-  email: yup
-    .string('Enter you email')
-    .email('Enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string('Enter you email')
-    .min(8, 'Minimum 8 characters length')
-    .required('Password is required'),
-});
-
 const Login = () => {
-  const classes = useStyles();
-  const history = useHistory();
   const { login, currentUser } = useAuth();
 
   React.useEffect(() => {
@@ -42,18 +36,20 @@ const Login = () => {
     }
   }, []);
 
+  const classes = useStyles();
+  const history = useHistory();
+  const [error, setError] = React.useState('');
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
-    validationSchema: validationSchema,
     onSubmit: async ({ email, password }) => {
       try {
         await login(email, password);
         history.push('/');
       } catch (e) {
-        console.log('error', e);
+        setError(e.message);
       }
     },
   });
@@ -61,6 +57,11 @@ const Login = () => {
   return (
     <Container maxWidth="xs">
       <Grid item className={classes.container}>
+        <Typography align="center" variant="h5">
+          Log In
+          <Divider />
+        </Typography>
+        {error && <ErrorMessage error={error} />}
         <form className={classes.form} onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
@@ -97,7 +98,7 @@ const Login = () => {
           </Button>
           <Grid container>
             <Grid item xs style={{ textAlign: 'right' }}>
-              <Link to="/signup"> Don't have an account? Sign Up</Link>
+              <Link to="/signup">Don't have an account? Sign Up</Link>
             </Grid>
           </Grid>
         </form>

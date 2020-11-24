@@ -9,14 +9,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const WarningBanner = ({ errorMessage }) => {
+const ErrorMessage = ({ error }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.alert}>
-      <Alert severity="error">{errorMessage}</Alert>
+      <Alert severity="error">{error}</Alert>
     </div>
   );
 };
 
-export default WarningBanner;
+export default ErrorMessage;
