@@ -1,12 +1,9 @@
-import React from "react";
-import { Card, CardContent } from "@material-ui/core";
-import LinkListItem from "./LinkListItem";
+import React from 'react';
+import { Card, CardContent } from '@material-ui/core';
+
+import LinkListItem from './LinkListItem';
 
 const LinkList = ({ history }) => {
-  if (history.length < 1) {
-    return null;
-  }
-
   const list = history.slice(0, 5).map((link, i) => {
     const { hash, longURL, shortURL, pageTitle } = link;
 

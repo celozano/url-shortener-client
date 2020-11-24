@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Button,
@@ -6,13 +6,13 @@ import {
   Grid,
   Tooltip,
   Typography,
-} from "@material-ui/core";
-import { copyToClipboard, handleLinkProtocol } from "../uitls";
+} from '@material-ui/core';
+import { copyToClipboard, handleLinkProtocol } from '../uitls';
 
 const LinkListItem = ({ pageTitle, longURL, shortURL, hasDivider }) => {
   return (
     <>
-      {hasDivider ? <Divider /> : null}
+      {hasDivider && <Divider />}
       <Box pt={2} pb={2}>
         <Grid container>
           <Grid item xs={12} sm={12}>
@@ -41,7 +41,7 @@ const LinkListItem = ({ pageTitle, longURL, shortURL, hasDivider }) => {
               onClick={(e) => {
                 copyToClipboard(shortURL);
               }}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
             >
               COPY
             </Button>

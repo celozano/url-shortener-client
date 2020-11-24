@@ -7,17 +7,17 @@ export const isValidURL = (string) => {
 };
 
 export const copyToClipboard = (shortURL) => {
-  const el = document.createElement("textarea");
+  const el = document.createElement('textarea');
   el.value = shortURL;
   document.body.appendChild(el);
   el.select();
-  document.execCommand("copy");
+  document.execCommand('copy');
   document.body.removeChild(el);
 };
 
 export const handleLinkProtocol = (longURL) => {
   let redirectLink =
-    longURL.includes("http://") || longURL.includes("https://")
+    longURL.includes('http://') || longURL.includes('https://')
       ? longURL
       : `http://${longURL}`;
 

@@ -1,24 +1,20 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import React from 'react';
+import { makeStyles } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-    position: "absolute",
+  alert: {
+    width: '100%',
+    marginTop: theme.spacing(1),
   },
 }));
 
-const WarningBanner = ({ warn, message }) => {
+const WarningBanner = ({ errorMessage }) => {
   const classes = useStyles();
 
-  if (!warn) {
-    return null;
-  }
-
   return (
-    <div className={classes.root}>
-      <Alert severity="error">{message}</Alert>
+    <div className={classes.alert}>
+      <Alert severity="error">{errorMessage}</Alert>
     </div>
   );
 };

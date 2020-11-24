@@ -1,22 +1,19 @@
-import React from "react";
-import { Grid, Button, TextField } from "@material-ui/core";
-import { isValidURL } from "../uitls";
+import React from 'react';
+import { Grid, Button, TextField } from '@material-ui/core';
+import { isValidURL } from '../uitls';
 
 const SearchBox = ({ onError, onSubmit, history, isLoading }) => {
-  const [url, setUrl] = React.useState("");
+  const [url, setUrl] = React.useState('');
   const inputRef = React.useRef(null);
+
   React.useEffect(() => {
     inputRef.current.focus();
-    setUrl("");
+    setUrl('');
   }, [history]);
 
   const handleSubmit = (url) => {
-    if (url === "") {
-      return;
-    }
-
     if (!isValidURL(url)) {
-      onError("Unable to shorten that link. It is not a valid url.");
+      onError('Unable to shorten that link. It is not a valid url.');
 
       return;
     }
@@ -47,7 +44,7 @@ const SearchBox = ({ onError, onSubmit, history, isLoading }) => {
           }}
           fullWidth
           style={{
-            padding: "15px",
+            padding: '15px',
           }}
           disabled={isLoading}
         >
